@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Parent Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Root variables and basic styles */
+        :root {
+            --primary-color: #1a73e8;
+            --secondary-color: #4285f4;
+            --accent-color: #34a853;
+            --light-color: #f8f9fa;
+            --dark-color: #202124;
+            --gray-color: #5f6368;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--gray-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 10px;
+        }
+
+        .nav-link:hover {
+            background-color: #f5f5f5;
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            background-color: #e8f0fe;
+            color: var(--primary-color);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .nav-link i {
+            width: 20px;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--gray-color);
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .logout-btn:hover {
+            background-color: #f5f5f5;
+            color: #ea4335;
+        }
+
+        /* Main content styles */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            color: var(--dark-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .logout-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Messages styles */
+        .messages-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .messages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .compose-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message-item {
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .message-item:hover {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .teacher-name {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .message-time {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+
+        .message-preview {
+            color: var(--gray-color);
+            font-size: 0.95rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .logo h1, .nav-link span, .logout-btn span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .nav-link, .logout-btn {
+                justify-content: center;
+            }
+
+            .nav-link i, .logout-btn i {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.jfif" alt="SRKR Engineering College Logo">
+            <h1>Parent Portal</h1>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="parent-dashboard.html" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="parent-attendance.html" class="nav-link">
+                <i class="fas fa-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+            <a href="parent-messages.html" class="nav-link active">
+                <i class="fas fa-envelope"></i>
+                <span>Messages</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <h2>Messages</h2>
+            <div class="user-info">
+                <img src="https://cdn-icons-png.flaticon.com/512/7541/7541894.png"" alt="Parent Profile">
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="messages-section">
+            <div class="messages-header">
+                <h3>Messages with Teachers</h3>
+                <button class="compose-btn">
+                    <i class="fas fa-plus"></i>
+                    New Message
+                </button>
+            </div>
+            <div class="message-list">
+                <div class="message-item">
+                    <div class="message-header">
+                        <span class="teacher-name">Mrs. Sarah Johnson</span>
+                        <span class="message-time">2 hours ago</span>
+                    </div>
+                    <div class="message-preview">
+                        Regarding your child's performance in the recent mathematics test...
+                    </div>
+                </div>
+                <div class="message-item">
+                    <div class="message-header">
+                        <span class="teacher-name">Mr. Robert Wilson</span>
+                        <span class="message-time">Yesterday</span>
+                    </div>
+                    <div class="message-preview">
+                        Update about the upcoming parent-teacher meeting scheduled for next week...
+                    </div>
+                </div>
+                <div class="message-item">
+                    <div class="message-header">
+                        <span class="teacher-name">Ms. Emily Parker</span>
+                        <span class="message-time">2 days ago</span>
+                    </div>
+                    <div class="message-preview">
+                        Your child's science project submission deadline has been extended...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function checkAuth() {
+            const isLoggedIn = sessionStorage.getItem('parentLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'parent-login.html';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('parentLoggedIn');
+            window.location.href = 'parent-login.html';
+        }
+
+        checkAuth();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management - SRKR Engineering College</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --secondary-color: #4285f4;
+            --accent-color: #34a853;
+            --light-color: #f8f9fa;
+            --dark-color: #202124;
+            --gray-color: #5f6368;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--gray-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            color: var(--dark-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .logout-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Student List Styles - Updated */
+        .students-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .students-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 8px 15px;
+            padding-left: 35px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 250px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-color);
+        }
+
+        .filter-dropdown select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+        }
+
+        /* Students Table - Updated */
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .students-table th,
+        .students-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .students-table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .students-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .student-name {
+            font-weight: 500;
+        }
+
+        .student-id {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .view-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Pagination - Updated */
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .logo h1, .nav-link span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .nav-link {
+                justify-content: center;
+            }
+
+            .nav-link i {
+                margin: 0;
+            }
+
+            .student-actions {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .list-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="logo">
+            <img src="logo.jfif" alt="SRKR Engineering College Logo">
+            <h1>SRKR</h1>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="teacher-dashboard.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="teacher-attendance.html" class="nav-link">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Attendance</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="teacher-marks.html" class="nav-link">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Marks</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="teacher-reports.html" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="teacher-students.html" class="nav-link active">
+                    <i class="fas fa-users"></i>
+                    <span>Students</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="teacher-messages.html" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Messages</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="teacher-settings.html" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <h2>Student Management</h2>
+            <div class="user-info">
+                <img src="https://cdn-icons-png.flaticon.com/512/3750/3750020.png" alt="Teacher Profile">
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="students-container">
+            <div class="students-header">
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search students...">
+                    </div>
+                    <div class="filter-dropdown">
+                        <select>
+                            <option value="">All Classes</option>
+                            <option value="cse">CSE</option>
+                            <option value="ece">ECE</option>
+                            <option value="eee">EEE</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Class</th>
+                        <th>Attendance</th>
+                        <th>Performance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="student-info">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135810.png" alt="Student">
+                                <div>
+                                    <div class="student-name">John Doe</div>
+                                    <div class="student-id">CSE20001</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>CSE-A</td>
+                        <td>85%</td>
+                        <td>Good</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view-btn" onclick="viewStudentDetails('CSE20001')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="action-btn edit-btn" onclick="sendMessage('CSE20001')">
+                                    <i class="fas fa-envelope"></i> Message
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="student-info">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135789.png" alt="Student">
+                                <div>
+                                    <div class="student-name">Jane Smith</div>
+                                    <div class="student-id">CSE20002</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>CSE-B</td>
+                        <td>92%</td>
+                        <td>Excellent</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view-btn" onclick="viewStudentDetails('CSE20002')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="action-btn edit-btn" onclick="sendMessage('CSE20002')">
+                                    <i class="fas fa-envelope"></i> Message
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="student-info">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135823.png" alt="Student">
+                                <div>
+                                    <div class="student-name">Mike Johnson</div>
+                                    <div class="student-id">CSE20003</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>CSE-A</td>
+                        <td>78%</td>
+                        <td>Average</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view-btn" onclick="viewStudentDetails('CSE20003')">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                <button class="action-btn edit-btn" onclick="sendMessage('CSE20003')">
+                                    <i class="fas fa-envelope"></i> Message
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button><i class="fas fa-chevron-left"></i></button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function checkAuth() {
+            const isLoggedIn = sessionStorage.getItem('teacherLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'teacher-login.html';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('teacherLoggedIn');
+            window.location.href = 'teacher-login.html';
+        }
+
+        function viewStudentDetails(rollNo) {
+            // Add your view details logic here
+            alert(`Viewing details for student ${rollNo}`);
+        }
+
+        function sendMessage(rollNo) {
+            // Add your message sending logic here
+            alert(`Sending message to student ${rollNo}`);
+        }
+
+        checkAuth();
+    </script>
+</body>
+</html> 
